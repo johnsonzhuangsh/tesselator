@@ -1,6 +1,7 @@
 # tesselator
 
-https://github.com/sdragonx/libtess
+[Libtess](https://gitlab.freedesktop.org/mesa/glu/tree/master/src/libtess) / [libtess2](https://github.com/memononen/libtess2)
+
 
 this is refactored version of the original libtess which comes with the GLU reference implementation.  
 this is C++ version(c++98), Using STL as memory pool.  
