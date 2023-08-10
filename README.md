@@ -1,6 +1,6 @@
 # tesselator
 
-C libaries: [GLU Libtess](https://gitlab.freedesktop.org/mesa/glu/tree/master/src/libtess) / [libtess2](https://github.com/memononen/libtess2)
+C libaries: [GLU Libtess](https://gitlab.freedesktop.org/mesa/glu/tree/master/src/libtess) / [libtess2](https://github.com/memononen/libtess2). Check OpenGL SW/HW tessellator compare [here](https://stackoverflow.com/questions/11311698/shader-tessellation-vs-algorithmic-tessellation).
 
 
 this is refactored version of the original libtess which comes with the GLU reference implementation.  
