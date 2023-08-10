@@ -36,7 +36,7 @@ extern "C" {
 	// Delete
 	svgDelete(plist);
 */
-		
+
 struct SVGPath
 {
 	float* pts;

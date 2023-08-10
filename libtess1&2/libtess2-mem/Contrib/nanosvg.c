@@ -1,24 +1,3 @@
-//
-// Copyright (c) 2009 Mikko Mononen memon@inside.org
-//
-// This software is provided 'as-is', without any express or implied
-// warranty.  In no event will the authors be held liable for any damages
-// arising from the use of this software.
-// Permission is granted to anyone to use this software for any purpose,
-// including commercial applications, and to alter it and redistribute it
-// freely, subject to the following restrictions:
-// 1. The origin of this software must not be misrepresented; you must not
-//    claim that you wrote the original software. If you use this software
-//    in a product, an acknowledgment in the product documentation would be
-//    appreciated but is not required.
-// 2. Altered source versions must be plainly marked as such, and must not be
-//    misrepresented as being the original software.
-// 3. This notice may not be removed or altered from any source distribution.
-//
-
-// The SVG parser is based on Anti-Graim Geometry SVG example
-// Copyright (C) 2002-2004 Maxim Shemanarev (McSeem)
-
 #include "nanosvg.h"
 #include <string.h>
 #include <stdio.h>
@@ -47,7 +26,7 @@ static void parseContent(char* s,
 	// Trim start white spaces
 	while (*s && isspace(*s)) s++;
 	if (!*s) return;
-	
+
 	if (contentCb)
 		(*contentCb)(ud, s);
 }
@@ -62,7 +41,7 @@ static void parseElement(char* s,
 	char* name;
 	int start = 0;
 	int end = 0;
-	
+
 	// Skip white space after the '<'
 	while (*s && isspace(*s)) s++;
 
@@ -110,7 +89,7 @@ static void parseElement(char* s,
 		while (*s && *s != '\"') s++;
 		if (*s) { *s++ = '\0'; }
 	}
-	
+
 	// List terminator
 	attr[nattr++] = 0;
 	attr[nattr++] = 0;
@@ -152,7 +131,7 @@ int parsexml(char* input,
 		else
 			s++;
 	}
-	
+
 	return 1;
 }
 
@@ -322,7 +301,7 @@ static void svgCreatePath(struct SVGParser* p, char closed)
 	struct SVGAttrib* attr;
 	struct SVGPath* path;
 	int i;
-	
+
 	if (!p)
 		return;
 
@@ -345,7 +324,7 @@ static void svgCreatePath(struct SVGParser* p, char closed)
 	}
 	path->closed = closed;
 	path->npts = p->nbuf;
-	
+
 	path->next = p->plist;
 	p->plist = path;
 
@@ -357,7 +336,7 @@ static void svgCreatePath(struct SVGParser* p, char closed)
 		path->pts[i*2+0] = pt[0]*t[0] + pt[1]*t[2] + t[4];
 		path->pts[i*2+1] = pt[0]*t[1] + pt[1]*t[3] + t[5];
 	}
-	
+
 	path->hasFill = attr->hasFill;
 	path->hasStroke = attr->hasStroke;
 	path->strokeWidth = attr->strokeWidth * t[0];
@@ -365,7 +344,7 @@ static void svgCreatePath(struct SVGParser* p, char closed)
 	path->fillColor = attr->fillColor;
 	if (path->hasFill)
 		path->fillColor |= (unsigned int)(attr->fillOpacity*255) << 24;
-	
+
 	path->strokeColor = attr->strokeColor;
 	if (path->hasStroke)
 		path->strokeColor |= (unsigned int)(attr->strokeOpacity*255) << 24;
@@ -451,7 +430,7 @@ static int parseTransformArgs(const char* str, float* args, int maxNa, int* na)
 {
 	const char* end;
 	const char* ptr;
-	
+
 	*na = 0;
 	ptr = str;
 	while (*ptr && *ptr != '(') ++ptr;
@@ -461,7 +440,7 @@ static int parseTransformArgs(const char* str, float* args, int maxNa, int* na)
 	while (*end && *end != ')') ++end;
 	if (*end == 0)
 		return 1;
-	
+
 	while (ptr < end)
 	{
 		if (isnum(*ptr))
@@ -533,7 +512,7 @@ static int svgParseAttr(struct SVGParser* p, const char* name, const char* value
 {
 	struct SVGAttrib* attr = svgGetAttr(p);
 	if (!attr) return 0;
-	
+
 	if (strcmp(name, "style") == 0)
 	{
 		svgParseStyle(p, value);
@@ -599,28 +578,28 @@ static int svgParseNameValue(struct SVGParser* p, const char* start, const char*
 	char name[512];
 	char value[512];
 	int n;
-	
+
 	str = start;
 	while (str < end && *str != ':') ++str;
-	
+
 	val = str;
-	
+
 	// Right Trim
 	while (str > start &&  (*str == ':' || isspace(*str))) --str;
 	++str;
-	
+
 	n = (int)(str - start);
 	if (n > 511) n = 511;
 	if (n) memcpy(name, start, n);
 	name[n] = 0;
-	
+
 	while (val < end && (*val == ':' || isspace(*val))) ++val;
-	
+
 	n = (int)(end - val);
 	if (n > 511) n = 511;
 	if (n) memcpy(value, val, n);
 	value[n] = 0;
-	
+
 	return svgParseAttr(p, name, value);
 }
 
@@ -628,7 +607,7 @@ static void svgParseStyle(struct SVGParser* p, const char* str)
 {
 	const char* start;
 	const char* end;
-	
+
 	while (*str)
 	{
 		// Left Trim
@@ -636,11 +615,11 @@ static void svgParseStyle(struct SVGParser* p, const char* str)
 		start = str;
 		while(*str && *str != ';') ++str;
 		end = str;
-		
+
 		// Right Trim
 		while (end > start &&  (*end == ';' || isspace(*end))) --end;
 		++end;
-		
+
 		svgParseNameValue(p, start, end);
 		if (*str) ++str;
 	}
@@ -698,13 +677,13 @@ static float distPtSeg(float x, float y, float px, float py, float qx, float qy)
 }
 
 static void cubicBezRec(struct SVGParser* p,
-						float x1, float y1, float x2, float y2, 
+						float x1, float y1, float x2, float y2,
 						float x3, float y3, float x4, float y4,
 						int level)
 {
 	float x12,y12,x23,y23,x34,y34,x123,y123,x234,y234,x1234,y1234;
 	float d;
-	
+
 	if (level > 12) return;
 
 	x12 = (x1+x2)*0.5f;
@@ -726,16 +705,16 @@ static void cubicBezRec(struct SVGParser* p,
 		svgPathPoint(p, x1234, y1234);
 		return;
 	}
-	
-	cubicBezRec(p, x1,y1, x12,y12, x123,y123, x1234,y1234, level+1); 
-	cubicBezRec(p, x1234,y1234, x234,y234, x34,y34, x4,y4, level+1); 
+
+	cubicBezRec(p, x1,y1, x12,y12, x123,y123, x1234,y1234, level+1);
+	cubicBezRec(p, x1234,y1234, x234,y234, x34,y34, x4,y4, level+1);
 }
 
 static void cubicBez(struct SVGParser* p,
 					 float x1, float y1, float cx1, float cy1,
 					 float cx2, float cy2, float x2, float y2)
 {
-	cubicBezRec(p, x1,y1, cx1,cy1, cx2,cy2, x2,y2, 0); 
+	cubicBezRec(p, x1,y1, cx1,cy1, cx2,cy2, x2,y2, 0);
 	svgPathPoint(p, x2, y2);
 }
 
@@ -744,10 +723,10 @@ static void quadBezRec(struct SVGParser* p,
 					   int level)
 {
 	float x12,y12,x23,y23,x123,y123,d;
-	
+
 	if (level > 12) return;
-	
-	x12 = (x1+x2)*0.5f;                
+
+	x12 = (x1+x2)*0.5f;
 	y12 = (y1+y2)*0.5f;
 	x23 = (x2+x3)*0.5f;
 	y23 = (y2+y3)*0.5f;
@@ -760,15 +739,15 @@ static void quadBezRec(struct SVGParser* p,
 		svgPathPoint(p, x123, y123);
 		return;
 	}
-	
-	quadBezRec(p, x1,y1, x12,y12, x123,y123, level+1); 
-	quadBezRec(p, x123,y123, x23,y23, x3,y3, level+1); 
+
+	quadBezRec(p, x1,y1, x12,y12, x123,y123, level+1);
+	quadBezRec(p, x123,y123, x23,y23, x3,y3, level+1);
 }
 
 static void quadBez(struct SVGParser* p,
 					float x1, float y1, float cx, float cy, float x2, float y2)
 {
-	quadBezRec(p, x1,y1, cx,cy, x2,y2, 0); 
+	quadBezRec(p, x1,y1, cx,cy, x2,y2, 0);
 	svgPathPoint(p, x2, y2);
 }
 
@@ -809,7 +788,7 @@ static void pathCubicBezTo(struct SVGParser* p, float* cpx, float* cpy,
 						   float* cpx2, float* cpy2, float* args, int rel)
 {
 	float x1, y1, x2, y2, cx1, cy1, cx2, cy2;
-	
+
 	x1 = *cpx;
 	y1 = *cpy;
 	if (rel)
@@ -832,7 +811,7 @@ static void pathCubicBezTo(struct SVGParser* p, float* cpx, float* cpy,
 	}
 
 	cubicBez(p, x1,y1, cx1,cy1, cx2,cy2, x2,y2);
-	
+
 	*cpx2 = cx2;
 	*cpy2 = cy2;
 	*cpx = x2;
@@ -843,7 +822,7 @@ static void pathCubicBezShortTo(struct SVGParser* p, float* cpx, float* cpy,
 								float* cpx2, float* cpy2, float* args, int rel)
 {
 	float x1, y1, x2, y2, cx1, cy1, cx2, cy2;
-	
+
 	x1 = *cpx;
 	y1 = *cpy;
 	if (rel)
@@ -860,12 +839,12 @@ static void pathCubicBezShortTo(struct SVGParser* p, float* cpx, float* cpy,
 		x2 = args[2];
 		y2 = args[3];
 	}
-	
+
 	cx1 = 2*x1 - *cpx2;
 	cy1 = 2*y1 - *cpy2;
-	
+
 	cubicBez(p, x1,y1, cx1,cy1, cx2,cy2, x2,y2);
-	
+
 	*cpx2 = cx2;
 	*cpy2 = cy2;
 	*cpx = x2;
@@ -876,7 +855,7 @@ static void pathQuadBezTo(struct SVGParser* p, float* cpx, float* cpy,
 						  float* cpx2, float* cpy2, float* args, int rel)
 {
 	float x1, y1, x2, y2, cx, cy;
-	
+
 	x1 = *cpx;
 	y1 = *cpy;
 	if (rel)
@@ -893,9 +872,9 @@ static void pathQuadBezTo(struct SVGParser* p, float* cpx, float* cpy,
 		x2 = args[2];
 		y2 = args[3];
 	}
-	
+
 	quadBez(p, x1,y1, cx,cy, x2,y2);
-	
+
 	*cpx2 = cx;
 	*cpy2 = cy;
 	*cpx = x2;
@@ -906,7 +885,7 @@ static void pathQuadBezShortTo(struct SVGParser* p, float* cpx, float* cpy,
 							   float* cpx2, float* cpy2, float* args, int rel)
 {
 	float x1, y1, x2, y2, cx, cy;
-	
+
 	x1 = *cpx;
 	y1 = *cpy;
 	if (rel)
@@ -924,7 +903,7 @@ static void pathQuadBezShortTo(struct SVGParser* p, float* cpx, float* cpy,
 	cy = 2*y1 - *cpy2;
 
 	quadBez(p, x1,y1, cx,cy, x2,y2);
-	
+
 	*cpx2 = cx;
 	*cpy2 = cy;
 	*cpx = x2;
@@ -943,7 +922,7 @@ static void svgParsePath(struct SVGParser* p, const char** attr)
 	char closedFlag;
 	int i;
 	char item[64];
-	
+
 	for (i = 0; attr[i]; i += 2)
 	{
 		if (strcmp(attr[i], "d") == 0)
@@ -953,12 +932,12 @@ static void svgParsePath(struct SVGParser* p, const char** attr)
 			svgResetPath(p);
 			closedFlag = 0;
 			nargs = 0;
-			
+
 			while (*s)
 			{
 				s = getNextPathItem(s, item);
 				if (!*item) break;
-				
+
 				if (isnum(item[0]))
 				{
 					if (nargs < 10)
@@ -1036,11 +1015,11 @@ static void svgParsePath(struct SVGParser* p, const char** attr)
 					}
 				}
 			}
-			
+
 			// Commit path.
 			if (p->nbuf)
 				svgCreatePath(p, closedFlag);
-			
+
 		}
 		else
 		{
@@ -1060,7 +1039,7 @@ static void svgParseRect(struct SVGParser* p, const char** attr)
 	float w = 0.0f;
 	float h = 0.0f;
 	int i;
-	
+
 	for (i = 0; attr[i]; i += 2)
 	{
 		if (!svgParseAttr(p, attr[i], attr[i + 1]))
@@ -1071,7 +1050,7 @@ static void svgParseRect(struct SVGParser* p, const char** attr)
 			if (strcmp(attr[i], "height") == 0) h = parseFloat(attr[i+1]);
 		}
 	}
-	
+
 	if (w != 0.0f && h != 0.0f)
 	{
 		svgResetPath(p);
@@ -1080,7 +1059,7 @@ static void svgParseRect(struct SVGParser* p, const char** attr)
 		svgPathPoint(p, x+w, y);
 		svgPathPoint(p, x+w, y+h);
 		svgPathPoint(p, x, y+h);
-		
+
 		svgCreatePath(p, 1);
 	}
 }
@@ -1093,7 +1072,7 @@ static void svgParseCircle(struct SVGParser* p, const char** attr)
 	float da;
 	int i,n;
 	float x,y,u;
-	
+
 	for (i = 0; attr[i]; i += 2)
 	{
 		if (!svgParseAttr(p, attr[i], attr[i + 1]))
@@ -1103,7 +1082,7 @@ static void svgParseCircle(struct SVGParser* p, const char** attr)
 			if (strcmp(attr[i], "r") == 0) r = fabsf(parseFloat(attr[i+1]));
 		}
 	}
-	
+
 	if (r != 0.0f)
 	{
 		svgResetPath(p);
@@ -1119,7 +1098,7 @@ static void svgParseCircle(struct SVGParser* p, const char** attr)
 			y = cy + sinf(u)*r;
 			svgPathPoint(p, x, y);
 		}
-		
+
 		svgCreatePath(p, 1);
 	}
 }
@@ -1131,7 +1110,7 @@ static void svgParseLine(struct SVGParser* p, const char** attr)
 	float x2 = 0.0;
 	float y2 = 0.0;
 	int i;
-	
+
 	for (i = 0; attr[i]; i += 2)
 	{
 		if (!svgParseAttr(p, attr[i], attr[i + 1]))
@@ -1142,12 +1121,12 @@ static void svgParseLine(struct SVGParser* p, const char** attr)
 			if (strcmp(attr[i], "y2") == 0) y2 = parseFloat(attr[i + 1]);
 		}
 	}
-	
+
 	svgResetPath(p);
-	
+
 	svgPathPoint(p, x1, y1);
 	svgPathPoint(p, x2, y2);
-	
+
 	svgCreatePath(p, 0);
 }
 
@@ -1158,14 +1137,14 @@ static void svgParsePoly(struct SVGParser* p, const char** attr, int closeFlag)
 	float args[2];
 	int nargs;
 	char item[64];
-	
+
 	svgResetPath(p);
-	
+
 	for (i = 0; attr[i]; i += 2)
 	{
 		if (!svgParseAttr(p, attr[i], attr[i + 1]))
 		{
-			if (strcmp(attr[i], "points") == 0) 
+			if (strcmp(attr[i], "points") == 0)
 			{
 				s = attr[i + 1];
 				nargs = 0;
@@ -1182,18 +1161,18 @@ static void svgParsePoly(struct SVGParser* p, const char** attr, int closeFlag)
 			}
 		}
 	}
-	
+
 	svgCreatePath(p, closeFlag);
 }
 
 static void svgStartElement(void* ud, const char* el, const char** attr)
 {
 	struct SVGParser* p = (struct SVGParser*)ud;
-	
+
 	// Skip everything in defs
 	if (p->defsFlag)
 		return;
-	
+
 	if (strcmp(el, "g") == 0)
 	{
 		svgPushAttr(p);
@@ -1208,31 +1187,31 @@ static void svgStartElement(void* ud, const char* el, const char** attr)
 		p->pathFlag = 1;
 		svgPopAttr(p);
 	}
-	else if (strcmp(el, "rect") == 0) 
+	else if (strcmp(el, "rect") == 0)
 	{
 		svgPushAttr(p);
 		svgParseRect(p, attr);
 		svgPopAttr(p);
 	}
-	else if (strcmp(el, "circle") == 0) 
+	else if (strcmp(el, "circle") == 0)
 	{
 		svgPushAttr(p);
 		svgParseCircle(p, attr);
 		svgPopAttr(p);
 	}
-	else if (strcmp(el, "line") == 0) 
+	else if (strcmp(el, "line") == 0)
 	{
 		svgPushAttr(p);
 		svgParseLine(p, attr);
 		svgPopAttr(p);
 	}
-	else if (strcmp(el, "polyline") == 0) 
+	else if (strcmp(el, "polyline") == 0)
 	{
 		svgPushAttr(p);
 		svgParsePoly(p, attr, 0);
 		svgPopAttr(p);
 	}
-	else if (strcmp(el, "polygon") == 0) 
+	else if (strcmp(el, "polygon") == 0)
 	{
 		svgPushAttr(p);
 		svgParsePoly(p, attr, 1);
@@ -1247,7 +1226,7 @@ static void svgStartElement(void* ud, const char* el, const char** attr)
 static void svgEndElement(void* ud, const char* el)
 {
 	struct SVGParser* p = (struct SVGParser*)ud;
-	
+
 	if (strcmp(el, "g") == 0)
 	{
 		svgPopAttr(p);
@@ -1271,7 +1250,7 @@ struct SVGPath* svgParse(char* input)
 {
 	struct SVGParser* p;
 	struct SVGPath* ret = 0;
-	
+
 	p = svgCreateParser();
 	if (!p)
 		return 0;
@@ -1290,7 +1269,7 @@ struct SVGPath* svgParse(char* input)
 
 	ret = p->plist;
 	p->plist = 0;
-	
+
 	svgDeleteParser(p);
 
 	return ret;
